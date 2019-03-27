@@ -1,5 +1,6 @@
 (ns protor.smtp
-  (:require [integrant.core :as ig])
+  (:require [integrant.core :as ig]
+            [protor.state :as state])
   (:import [org.subethamail.smtp.helper SimpleMessageListener]))
 
 ;; see https://github.com/whilo/bote/blob/master/src/bote/core.clj
@@ -11,21 +12,22 @@
       (let [mime-message (javax.mail.internet.MimeMessage.
                           (javax.mail.Session/getDefaultInstance
                            (java.util.Properties.)) data)]
-        (message-fn {:from from
-                     :to to
-                     :subject (.getSubject mime-message)
-                     :headers  (->> (.getAllHeaders mime-message)
-                                    enumeration-seq
-                                    (map (fn [h] [(.getName h)
-                                                 (.getValue h)]))
-                                    (into {}))
-                     :recipients (map str (.getAllRecipients mime-message))
-                     :content-type (.getContentType mime-message)
-                     :content (.getContent mime-message)
-                     :encoding (.getEncoding mime-message)
-                     :sent-date (.getSentDate mime-message)
-                     ::mime-message mime-message
-                     ::raw-data data})))))
+        (message-fn (with-meta
+                      {:from from
+                       :to to
+                       :subject (.getSubject mime-message)
+                       :headers  (->> (.getAllHeaders mime-message)
+                                      enumeration-seq
+                                      (map (fn [h] [(.getName h)
+                                                    (.getValue h)]))
+                                      (into {}))
+                       :recipients (map str (.getAllRecipients mime-message))
+                       :content-type (.getContentType mime-message)
+                       :encoding (.getEncoding mime-message)
+                       :sent-date (.getSentDate mime-message)}
+                      {::mime-message mime-message
+                       ::content (.getContent mime-message)
+                       ::raw-data data}))))))
 
 (defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls?]
                                       :or {accept-fn? (fn [from to] true)
@@ -40,7 +42,7 @@
     server))
 
 (defmethod ig/init-key :smtp [_ {:keys [state server] :as opts}]
-  (let [smtp (create-smtp-server #(swap! state update-in [:incoming] conj %) server)]
+  (let [smtp (create-smtp-server #(state/add-message state %) server)]
     (.start smtp)
     smtp))
 

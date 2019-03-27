@@ -1,12 +1,19 @@
 (ns user
   (:require [integrant.core :as ig]
             [clojure.repl] ;; FIXME in cljsh
+            [robert.hooke] ;; FIXME in cljsh
             [cljsh.source :refer [source-expand-ns]]
+            [cljsh.complement]
+            [clojure.edn :as edn]
             [aprint.core :refer [aprint ap]]
             [integrant.repl :refer [clear halt go init prep suspend resume reset]]
             [clojure.tools.namespace.repl :as repl]
             [clojure.tools.namespace.find :as find]
             [protor.main :as main]))
+
+(defn read-edn-string [s]
+  (binding [*data-readers* {'inst clojure.instant/read-instant-calendar}]
+    (edn/read-string s)))
 
 (integrant.repl/set-prep! #(main/read-config "config.edn"))
 
@@ -20,5 +27,7 @@
 (comment
   (clojure.tools.namespace.dir/scan-dirs repl/refresh-tracker [] {:platform clj+edn})
   )
+
+(defonce _patch (cljsh.complement/patch))
 
 (println "System: #'integrant.repl.state/system\nRun with (reset)")
