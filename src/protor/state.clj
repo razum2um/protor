@@ -1,6 +1,7 @@
 (ns protor.state
-  (:require [integrant.core :as ig]))
+  (:require [integrant.core :as ig]
+            [duratom.core :as duratom]))
 
-(defmethod ig/init-key :state [_ {:keys [handler] :as opts}]
-  (println "start state")
-  )
+(defmethod ig/init-key :state [_ {:keys [duratom] :as opts}]
+  (let [args (conj duratom :init {:incoming []})]
+    (apply duratom/duratom args)))
