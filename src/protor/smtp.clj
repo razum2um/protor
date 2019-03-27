@@ -1,7 +1,8 @@
 (ns protor.smtp
   (:require [integrant.core :as ig]
             [protor.state :as state])
-  (:import [org.subethamail.smtp.helper SimpleMessageListener]))
+  (:import [org.subethamail.smtp.helper SimpleMessageListener]
+           [java.net InetAddress]))
 
 ;; see https://github.com/whilo/bote/blob/master/src/bote/core.clj
 (defn- message-listener [accept-fn? message-fn]
@@ -29,7 +30,7 @@
                        ::content (.getContent mime-message)
                        ::raw-data data}))))))
 
-(defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls?]
+(defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls? host]
                                       :or {accept-fn? (fn [from to] true)
                                            port 2525}}]
   (let [server
@@ -38,6 +39,7 @@
           (message-listener accept-fn? message-fn)))]
     (when enable-tls? (.setEnableTLS server true))
     (when require-tls? (.setRequireTLS server true))
+    (when host (.setBindAddress server (InetAddress/getByName host)))
     (.setPort server port)
     server))
 
