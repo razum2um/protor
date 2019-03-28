@@ -1,0 +1,5 @@
+
+* TODO open-relay validation in test http://www.aupads.org/cgi-bin/test-relay.cgi?host_to_test=protor.razum2um.me
+
+* TODO reactive frontend drawing the current state
+

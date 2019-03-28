@@ -1,15 +1,22 @@
 (ns user
   (:require [integrant.core :as ig]
+            [clojure.spec-alpha2 :as s]
             [clojure.repl] ;; FIXME in cljsh
             [robert.hooke] ;; FIXME in cljsh
             [cljsh.source :refer [source-expand-ns]]
+            [eftest.runner :refer [find-tests run-tests]]
+            [clojure.java.io :as io]
+            [clj-antlr.core :as antlr]
             [cljsh.complement]
             [clojure.edn :as edn]
+            [clojure.string :as string]
+            [jsonista.core :as j]
             [aprint.core :refer [aprint ap]]
             [integrant.repl :refer [clear halt go init prep suspend resume reset]]
             [clojure.tools.namespace.repl :as repl]
             [clojure.tools.namespace.find :as find]
-            [protor.main :as main]))
+            [protor.main :as main]
+            [protor.receipt :as receipt]))
 
 (defn read-edn-string [s]
   (binding [*data-readers* {'inst clojure.instant/read-instant-calendar}]
@@ -33,4 +40,6 @@
 
 (defonce _patch (cljsh.complement/patch))
 
-(println "System: #'integrant.repl.state/system\nRun with (reset)")
+(defn process-all-by-ts [])
+
+(println "System: #'integrant.repl.state/system\nRun with (reset)\nRun tests: (run-tests (find-tests "test"))")

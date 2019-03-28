@@ -1,10 +1,16 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.10.0"}
+        camel-snake-kebab {:mvn/version "0.4.0"}
+        org.clojure/spec-alpha2 {:git/url
+                                 "https://github.com/razum2um/spec-alpha2.git"
+                                 :sha "54dd2c74eb866b138002bb70cb892d630e5f7c2e"}
         io.forward/clojure-mail {:mvn/version "1.0.7"}
         org.clojars.nakkaya/subethasmtp {:mvn/version "3.1.7"}
         less-awful-ssl {:mvn/version "1.0.4"}
         io.aviso/logging {:mvn/version "0.3.1"}
         integrant {:mvn/version "0.8.0-alpha2"}
+        metosin/jsonista {:mvn/version "0.2.2"}
+        clj-antlr {:mvn/version "0.2.4"}
         duratom {:mvn/version "0.4.1"}}
  :aliases
  {:dev {:extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}
@@ -18,8 +24,11 @@
                         org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}}
         :main-opts  ["-m" "rebel-readline.main"]
         :extra-paths ["dev"]}
-  :test {:extra-deps {com.draines/postal {:mvn/version "2.0.3"}}}
-  :head {:extra-deps {com.bhauman/rebel-readline {:local/root
-                                                  "../rebel-readline/rebel-readline"}}}
+  :test {:extra-deps {com.draines/postal {:mvn/version "2.0.3"}
+                      eftest {:mvn/version "0.5.7"}
+                      org.clojure/test.check {:mvn/version "0.9.0"}}
+         :extra-paths ["test"]}
+  :head {:extra-deps {com.bhauman/rebel-readline {:local/root "../rebel-readline/rebel-readline"}
+                      org.clojure/spec-alpha2 {:local/root "../spec-alpha2"}}}
   :jks {:jvm-opts ["-Djavax.net.ssl.keyStore=protor.jks"
                    "-Djavax.net.ssl.keyStorePassword=123456"]}}}
