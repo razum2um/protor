@@ -26,6 +26,9 @@
 ;; interesting debug
 (comment
   (clojure.tools.namespace.dir/scan-dirs repl/refresh-tracker [] {:platform clj+edn})
+
+  ;; print some last header
+  (-> integrant.repl.state/system :state deref :incoming last :headers (->> (reduce-kv #(merge %1 %3) {})) (get "Received") println)
   )
 
 (defonce _patch (cljsh.complement/patch))
