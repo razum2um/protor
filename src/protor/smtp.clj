@@ -27,7 +27,7 @@
             (.setEnabledCipherSuites sock ciphers))
           (let [supported-protocols (.getSupportedProtocols sock)
                 protocols (if ssl-protocols
-                            (filter (set supported-protocols) ssl-protocols)
+                            (into-array (filter (set supported-protocols) ssl-protocols))
                             supported-protocols)]
             (log/debug (pr-str {:enabled-protocols (seq protocols)}))
             (.setEnabledProtocols sock protocols))
