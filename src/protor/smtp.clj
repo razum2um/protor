@@ -1,6 +1,7 @@
 (ns protor.smtp
   (:require [integrant.core :as ig]
             [protor.state :as state]
+            [clojure.string :as string]
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
@@ -68,8 +69,12 @@
     (.setPort server port)
     server))
 
+(defn get-accept-fn [{:keys [host]} _from to]
+  (string/ends-with? to (str "@" host)))
+
 (defmethod ig/init-key :smtp [_ {:keys [state server] :as opts}]
-  (let [smtp (create-smtp-server #(state/add-message state %) server)]
+  (let [smtp (create-smtp-server #(state/add-message state %)
+                                 (assoc server :accept-fn? (partial get-accept-fn server)))]
     (.start smtp)
     smtp))
 
