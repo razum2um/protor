@@ -1,6 +1,7 @@
 (ns protor.smtp
   (:require [integrant.core :as ig]
             [protor.state :as state]
+            [clojure.tools.logging :as log]
             [less.awful.ssl :refer :all])
   (:import [org.subethamail.smtp.helper SimpleMessageListener SimpleMessageListenerAdapter]
            [org.subethamail.smtp.server SMTPServer]
@@ -14,12 +15,14 @@
         (let [^InetAddress addr (.getInetAddress socket)
               port (.getPort socket)
               host (.getHostName addr)
-              ^SSLSocket sock (-> ssl-ctx
-                                  .getSocketFactory
-                                  (.createSocket host port))]
-          (let [x (.getSupportedCipherSuites sock)]
-            (println {:cipher-suites x})
-            (.setEnabledCipherSuites sock x))
+              ^SSLSocket sock (-> ssl-ctx .getSocketFactory
+                                  (.createSocket socket host port true))]
+          (let [ciphers (.getSupportedCipherSuites sock)]
+            (log/debug (pr-str {:ciphers (seq ciphers)}))
+            (.setEnabledCipherSuites sock ciphers))
+          (let [protocols (.getSupportedProtocols sock)]
+            (log/debug (pr-str {:protocols (seq protocols)}))
+            (.setEnabledProtocols sock protocols))
           (.setUseClientMode sock false)
           sock)))))
 

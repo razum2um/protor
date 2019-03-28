@@ -22,3 +22,5 @@ pom.xml.asc
 state.edn
 *pem
 *.pkcs8
+config.edn
+protor.jks
