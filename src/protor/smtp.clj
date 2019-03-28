@@ -43,10 +43,14 @@
       (let [mime-message (javax.mail.internet.MimeMessage.
                           (javax.mail.Session/getDefaultInstance
                            (java.util.Properties.)) data)]
-        (message-fn (with-meta
-                      (read-message mime-message)
-                      {::mime-message mime-message
-                       ::raw-data data}))))))
+        (-> mime-message
+            read-message
+            ;; from/to are array, reg. from see RFC 822/A.2.7. Agent for member of a committee
+            ;; see current delivery
+            (assoc :sender from :receiver to)
+            (with-meta {::mime-message mime-message
+                        ::raw-data data})
+            message-fn)))))
 
 (defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls?
                                              host ssl ssl-protocols]
