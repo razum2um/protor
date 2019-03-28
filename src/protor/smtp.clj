@@ -35,6 +35,9 @@
           (.setUseClientMode sock false)
           sock)))))
 
+(defn- wrap-coll [x]
+  (if (sequential? x) x (list x)))
+
 ;; see https://github.com/whilo/bote/blob/master/src/bote/core.clj
 (defn- message-listener [accept-fn? message-fn]
   (proxy [SimpleMessageListener] []
@@ -49,6 +52,8 @@
             ;; from/to are array, reg. from see RFC 822/A.2.7. Agent for member of a committee
             ;; see current delivery
             (assoc :sender from :receiver to)
+            ;; https://github.com/owainlewis/clojure-mail/issues/67
+            (update-in [:body] wrap-coll)
             (with-meta {::mime-message mime-message
                         ::raw-data data})
             message-fn)))))
