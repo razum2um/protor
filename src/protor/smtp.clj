@@ -1,8 +1,27 @@
 (ns protor.smtp
   (:require [integrant.core :as ig]
-            [protor.state :as state])
-  (:import [org.subethamail.smtp.helper SimpleMessageListener]
-           [java.net InetAddress]))
+            [protor.state :as state]
+            [less.awful.ssl :refer :all])
+  (:import [org.subethamail.smtp.helper SimpleMessageListener SimpleMessageListenerAdapter]
+           [org.subethamail.smtp.server SMTPServer]
+           [javax.net.ssl SSLSocket]
+           [java.net InetAddress Socket]))
+
+(defn- smtp-server [handler ssl]
+  (let [ssl-ctx (apply ssl-context ssl)]
+    (proxy [SMTPServer] [handler]
+      (createSSLSocket [^Socket socket]
+        (let [^InetAddress addr (.getInetAddress socket)
+              port (.getPort socket)
+              host (.getHostName addr)
+              ^SSLSocket sock (-> ssl-ctx
+                                  .getSocketFactory
+                                  (.createSocket host port))]
+          (let [x (.getSupportedCipherSuites sock)]
+            (println {:cipher-suites x})
+            (.setEnabledCipherSuites sock x))
+          (.setUseClientMode sock false)
+          sock)))))
 
 ;; see https://github.com/whilo/bote/blob/master/src/bote/core.clj
 (defn- message-listener [accept-fn? message-fn]
@@ -30,13 +49,13 @@
                        ::content (.getContent mime-message)
                        ::raw-data data}))))))
 
-(defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls? host]
+(defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls? host ssl]
                                       :or {accept-fn? (fn [from to] true)
                                            port 2525}}]
-  (let [server
-        (org.subethamail.smtp.server.SMTPServer.
-         (org.subethamail.smtp.helper.SimpleMessageListenerAdapter.
-          (message-listener accept-fn? message-fn)))]
+  (let [handler (SimpleMessageListenerAdapter. (message-listener accept-fn? message-fn))
+        server (if ssl
+                 (smtp-server handler ssl)
+                 (SMTPServer. handler))]
     (when enable-tls? (.setEnableTLS server true))
     (when require-tls? (.setRequireTLS server true))
     (when host (.setBindAddress server (InetAddress/getByName host)))

@@ -21,3 +21,4 @@ pom.xml.asc
 # End of https://www.gitignore.io/api/clojure
 state.edn
 *pem
+*.pkcs8
