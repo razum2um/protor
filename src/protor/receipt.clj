@@ -6,7 +6,8 @@
             [jsonista.core :as j]
             [camel-snake-kebab.core :refer [->kebab-case-keyword ->camelCaseString]]
             [clj-antlr.core :as antlr])
-  (:import [org.antlr.v4.runtime BufferedTokenStream]))
+  (:import [org.antlr.v4.runtime BufferedTokenStream]
+           [com.fasterxml.jackson.core JsonParser$Feature]))
 
 (def json-parser (antlr/parser (slurp (io/resource "json.g4"))
                                {:throw? false :format :raw}))
@@ -43,7 +44,10 @@
                (subs body (+ idx (count json*)))))
       json)))
 
-(def mapper (j/object-mapper {:encode-key-fn ->camelCaseString :decode-key-fn ->kebab-case-keyword}))
+(def mapper
+  (doto (j/object-mapper {:encode-key-fn ->camelCaseString
+                          :decode-key-fn ->kebab-case-keyword})
+    (.configure JsonParser$Feature/ALLOW_UNQUOTED_CONTROL_CHARS true)))
 
 (defn with-unique-key [{:keys [fiscal-drive-number fiscal-document-number fiscal-sign] :as receipt}]
   (let [id (str fiscal-drive-number "/" fiscal-document-number "/" fiscal-sign)]
