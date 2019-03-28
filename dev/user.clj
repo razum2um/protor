@@ -16,6 +16,7 @@
             [clojure.tools.namespace.repl :as repl]
             [clojure.tools.namespace.find :as find]
             [protor.main :as main]
+            [protor.state :as state]
             [protor.receipt :as receipt]))
 
 (defn read-edn-string [s]
@@ -40,6 +41,15 @@
 
 (defonce _patch (cljsh.complement/patch))
 
-(defn process-all-by-ts [])
+(defn process-all-by-ts []
+  (reduce (fn [acc x]
+            (let [{:keys [id] :as receipt} (-> x :body state/plain-body :body receipt/body->receipt)]
+              (assoc acc id receipt)))
+          {}
+          (-> integrant.repl.state/system :state deref :incoming)))
+
+(defn save-all-by-ts! []
+  (-> integrant.repl.state/system :state (swap! update-in [:receipts] merge (process-all-by-ts)))
+  true)
 
 (println "System: #'integrant.repl.state/system\nRun with (reset)\nRun tests: (run-tests (find-tests "test"))")
