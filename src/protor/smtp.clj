@@ -4,6 +4,7 @@
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
+            [clojure-mail.message :refer [read-message]]
             [less.awful.ssl :refer :all])
   (:import [org.subethamail.smtp.helper SimpleMessageListener SimpleMessageListenerAdapter]
            [org.subethamail.smtp.server SMTPServer]
@@ -43,20 +44,8 @@
                           (javax.mail.Session/getDefaultInstance
                            (java.util.Properties.)) data)]
         (message-fn (with-meta
-                      {:from from
-                       :to to
-                       :subject (.getSubject mime-message)
-                       :headers  (->> (.getAllHeaders mime-message)
-                                      enumeration-seq
-                                      (map (fn [h] [(.getName h)
-                                                    (.getValue h)]))
-                                      (into {}))
-                       :recipients (map str (.getAllRecipients mime-message))
-                       :content-type (.getContentType mime-message)
-                       :encoding (.getEncoding mime-message)
-                       :sent-date (.getSentDate mime-message)}
+                      (read-message mime-message)
                       {::mime-message mime-message
-                       ::content (.getContent mime-message)
                        ::raw-data data}))))))
 
 (defn create-smtp-server [message-fn {:keys [accept-fn? port enable-tls? require-tls?
