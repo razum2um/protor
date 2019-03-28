@@ -62,7 +62,9 @@
                  (SMTPServer. handler))]
     (when enable-tls? (.setEnableTLS server true))
     (when require-tls? (.setRequireTLS server true))
-    (when host (.setBindAddress server (InetAddress/getByName host)))
+    (when host
+      (.setBindAddress server (InetAddress/getByName host))
+      (.setHostName server host))
     (.setPort server port)
     server))
 
