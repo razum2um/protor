@@ -7,7 +7,6 @@
         io.forward/clojure-mail {:mvn/version "1.0.7"}
         org.clojars.nakkaya/subethasmtp {:mvn/version "3.1.7"}
         less-awful-ssl {:mvn/version "1.0.4"}
-        io.aviso/logging {:mvn/version "0.3.1"}
         integrant {:mvn/version "0.8.0-alpha2"}
         metosin/jsonista {:mvn/version "0.2.2"}
         clj-antlr {:mvn/version "0.2.4"}
@@ -19,6 +18,9 @@
         org.apache.lucene.morphology/dictionary-reader {:local/root "morphology/dictionary-reader-1.4.jar"}
         org.apache.lucene.morphology/morphology {:local/root "morphology/morphology-1.4.jar"}
         org.apache.lucene.morphology/morph {:local/root "morphology/morph-1.4.jar"}
+
+        io.aviso/logging {:mvn/version "0.3.1"}
+        org.slf4j/slf4j-simple {:mvn/version "1.7.25"}
         }
  :aliases
  {:dev {:extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}
