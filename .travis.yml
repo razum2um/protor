@@ -1,5 +1,18 @@
-language: clojure
-script: clj -A:test:ci
+language: java
+script: clojure -A:test:ci
+jdk:
+  - openjdk8
+  - openjdk11
+  - openjdk-ea
+install:
+  curl -O https://download.clojure.org/install/linux-install-1.10.0.442.sh
+  chmod +x linux-install-1.10.0.442.sh
+  sudo ./linux-install-1.10.0.442.sh
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
+    - $HOME/.cljs
+    - $HOME/.gitlibs
+    - node_modules
+    - .cpcache
+    - cljs-test-runner-out
