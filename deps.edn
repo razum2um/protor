@@ -39,6 +39,7 @@
                       eftest {:mvn/version "0.5.7"}
                       org.clojure/test.check {:mvn/version "0.9.0"}}
          :extra-paths ["test"]}
+  :ci {:main-opts ["-e" "(require,'[eftest.runner,:refer,[find-tests,run-tests]]),(run-tests,(find-tests,\"test\"))"]}
   :head {:extra-deps {com.bhauman/rebel-readline {:local/root "../rebel-readline/rebel-readline"}
                       org.clojure/spec-alpha2 {:local/root "../spec-alpha2"}}}
   :jks {:jvm-opts ["-Djavax.net.ssl.keyStore=protor.jks"
