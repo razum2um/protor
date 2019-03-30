@@ -29,5 +29,5 @@ including QR scanner, chatbots and hitting government api from server, but they 
 not a bad mobile app for us (for granted, lol),
 and we can send JSON with receipt from there, so enough for me.
 
-[Build Status]: https://travis-ci.org/razum2um/protor
-[BS img]: https://travis-ci.org/razum2um/protor.png
+[Build Status]: https://travis-ci.com/razum2um/protor
+[BS img]: https://travis-ci.com/razum2um/protor.png
