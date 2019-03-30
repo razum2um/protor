@@ -5,9 +5,9 @@ jdk:
   - openjdk11
   - openjdk-ea
 install:
-  curl -O https://download.clojure.org/install/linux-install-1.10.0.442.sh
-  chmod +x linux-install-1.10.0.442.sh
-  sudo ./linux-install-1.10.0.442.sh
+  - curl -O https://download.clojure.org/install/linux-install-1.10.0.442.sh
+  - chmod +x linux-install-1.10.0.442.sh
+  - sudo ./linux-install-1.10.0.442.sh
 cache:
   directories:
     - $HOME/.m2
