@@ -1,5 +1,6 @@
 (ns user
   (:require [integrant.core :as ig]
+            [com.rpl.specter :refer :all]
             [clojure.pprint :as pprint]
             [clojure.spec-alpha2 :as s]
             [clojure.repl] ;; FIXME in cljsh
@@ -18,7 +19,7 @@
             [clojure.tools.namespace.find :as find]
             [protor.main :as main]
             [protor.state :as state]
-            [protor.morph :as morph]
+            [protor.morph :as morph :refer [neg]]
             [protor.catalog :as catalog]
             [protor.receipt :as receipt]))
 
@@ -27,6 +28,8 @@
     (edn/read-string s)))
 
 (integrant.repl/set-prep! #(main/read-config "config.edn"))
+
+(alter-var-root #'aprint.dispatch/*aprint-seq-length* (constantly 100))
 
 ;; integrant.repl ignores edn config
 ;; however this is not sufficient
@@ -61,3 +64,14 @@
   (let [ns-sym (-> var-sym namespace symbol)]
     (require ns-sym :reload)
     (run-tests (find-tests var-sym))))
+
+(comment
+  ;; fill in categories
+  (-> integrant.repl.state/system :catalog catalog/classify!)
+
+  ;; purchases by category
+  (-> integrant.repl.state/system :catalog catalog/sums-by-category (->> (transform [MAP-VALS] #(/ % 100.0)) (sort-by (neg val))) aprint)
+
+  ;; total spent
+  (-> integrant.repl.state/system :state deref :receipts vals (->> (map :total-sum) (reduce +)) (/ 100.0))
+  )

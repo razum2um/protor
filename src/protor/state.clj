@@ -25,5 +25,5 @@
 
 
 (defmethod ig/init-key :state [_ {:keys [duratom] :as opts}]
-  (let [args (conj duratom :init {:incoming [] :receipts {}})]
+  (let [args (conj duratom :init {:incoming [] :receipts {} :catalog {}})]
     (apply duratom/duratom args)))
