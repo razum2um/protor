@@ -1,10 +1,12 @@
 # Protor
 
 An application to handle incoming mails containing receipt JSONs from Russian tax
-service. 
+service.
+
+[![Build Status][BS img]][Build Status]
 
 Could also serve as example how to organize code with integrant
-and how to deal with SMTP and some other stuff in Clojure.
+and how to deal with SMTP, integrant, duratom and some other stuff in Clojure.
 
 ## Name
 
@@ -26,3 +28,6 @@ So if we want to keep budget using this data, they know everything.
 including QR scanner, chatbots and hitting government api from server, but they already did
 not a bad mobile app for us (for granted, lol),
 and we can send JSON with receipt from there, so enough for me.
+
+[Build Status]: https://travis-ci.org/razum2um/protor
+[BS img]: https://travis-ci.org/razum2um/protor.png
