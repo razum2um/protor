@@ -1,5 +1,6 @@
 (ns user
   (:require [integrant.core :as ig]
+            [clojure.pprint :as pprint]
             [clojure.spec-alpha2 :as s]
             [clojure.repl] ;; FIXME in cljsh
             [robert.hooke] ;; FIXME in cljsh
@@ -17,6 +18,8 @@
             [clojure.tools.namespace.find :as find]
             [protor.main :as main]
             [protor.state :as state]
+            [protor.morph :as morph]
+            [protor.catalog :as catalog]
             [protor.receipt :as receipt]))
 
 (defn read-edn-string [s]
@@ -52,4 +55,9 @@
   (-> integrant.repl.state/system :state (swap! update-in [:receipts] merge (process-all-by-ts)))
   true)
 
-(println "System: #'integrant.repl.state/system\nRun with (reset)\nRun tests: (run-tests (find-tests "test"))")
+(println "System: #'integrant.repl.state/system\nRun with (reset)\nRun tests: (run-tests (find-tests \"test\"))")
+
+(defn test-sym [var-sym]
+  (let [ns-sym (-> var-sym namespace symbol)]
+    (require ns-sym :reload)
+    (run-tests (find-tests var-sym))))

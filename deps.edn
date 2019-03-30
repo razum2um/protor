@@ -11,7 +11,15 @@
         integrant {:mvn/version "0.8.0-alpha2"}
         metosin/jsonista {:mvn/version "0.2.2"}
         clj-antlr {:mvn/version "0.2.4"}
-        duratom {:mvn/version "0.4.1"}}
+        duratom {:mvn/version "0.4.1"}
+        medley {:mvn/version "1.1.0"}
+        ;; built from https://github.com/AKuznetsov/russianmorphology
+        org.apache.lucene.morphology/russian {:local/root "morphology/russian-1.4.jar"}
+        org.apache.lucene.morphology/english {:local/root "morphology/english-1.4.jar"}
+        org.apache.lucene.morphology/dictionary-reader {:local/root "morphology/dictionary-reader-1.4.jar"}
+        org.apache.lucene.morphology/morphology {:local/root "morphology/morphology-1.4.jar"}
+        org.apache.lucene.morphology/morph {:local/root "morphology/morph-1.4.jar"}
+        }
  :aliases
  {:dev {:extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}
                      com.rpl/specter {:mvn/version "1.1.2"}
@@ -19,6 +27,7 @@
                      org.clojure/java.classpath {:mvn/version "0.3.0"}
                      org.clojure/tools.trace {:mvn/version "0.7.10"}
                      robert/hooke {:mvn/version "1.3.0"}
+                     org.clojure/tools.deps.alpha {:mvn/version "0.6.496"}
                      cljsh {:mvn/version "0.1.0-SNAPSHOT"}}
         :override-deps {rewrite-clj {:mvn/version "0.6.1"}
                         org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}}
