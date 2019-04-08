@@ -47,7 +47,7 @@
 
 (defn classify! [{:keys [morph state] :as catalog}]
   (let [questions (all-item-words catalog)
-        {:keys [short long] :or {short {} long {}}} (:catalog state)
+        {:keys [short long] :or {short {} long {}}} (:catalog @state) ;; FIXME
         known (-> long keys set)
         questions* (remove known questions)
         inputs (atom (into PersistentQueue/EMPTY questions*))
@@ -58,7 +58,6 @@
                    (swap! short* assoc short-key answer)
                    (loop [[[long-key short-key] & tail] @inputs]
                      (when-let [pre-answer (@short* short-key)]
-                       (println "Skipping " long-key " -> " pre-answer)
                        (dequeue! inputs)
                        (recur tail)))))
     (swap! state update-in [:catalog :short] merge @short*)
